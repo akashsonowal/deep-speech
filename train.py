@@ -6,8 +6,6 @@ test_dataset = torchaudio.datasets.LIBRISPEECH("./", url="test-clean", download=
 torchaudio.transforms.FrequenceMasking()
 torchaudio.transforms.TimeMasking()
 
-
-
 def main():
   iter_meter = IterMeter()
   for epoch in range(1, epochs + 1):
