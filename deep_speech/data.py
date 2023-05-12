@@ -20,7 +20,15 @@ class TextTransform:
         ch = self.char_map['']
       else:
         ch = self.char_map[c]
-    int_sequence.append(ch)
+      int_sequence.append(ch)
+    return int_sequence
+  
+  def int_to_text(self, labels):
+    """Use a character map and convert int labels to an text sequence"""
+    string = []
+    for i in labels:
+      string.append(self.index_map[i])
+    return ''.join(string).replace('', ' ')
     
         
     
