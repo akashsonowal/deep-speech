@@ -10,6 +10,9 @@ train_audio_transforms = nn.Sequential(
 )
 valid_audio_transforms = torchaudio.transforms.MelSpectrogram()
 
+optimizer = optim.AdamW(model.parameters(), hparams['learning_rate'])
+scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=hparams['learning_rate'], steps_per_epoch=int(len(train_loader)), epochs=hparams['epochs'], anneal_startegy='linear')
+
 def main():
   iter_meter = IterMeter()
   for epoch in range(1, epochs + 1):
