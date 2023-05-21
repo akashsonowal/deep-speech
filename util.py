@@ -23,8 +23,29 @@ def _levenstein_distance(ref, hyp):
     pass
 
 
-def word_errors():
-    pass
+def word_errors(reference, hypothesis, ignore_case=False, delimiter=" "):
+    """Compute the levenshtein distance between reference sequence and
+    hypothesis sequence in word-level.
+    :param reference: The reference sentence.
+    :type reference: basestring
+    :param hypothesis: The hypothesis sentence.
+    :type hypothesis: basestring
+    :param ignore_case: Whether case-sensitive or not.
+    :type ignore_case: bool
+    :param delimiter: Delimiter of input sentences.
+    :type delimiter: char
+    :return: Levenshtein distance and word number of reference sentence.
+    :rtype: list
+    """
+    if ignore_case == True:
+        reference = reference.lower()
+        hypothesis = hypothesis.lower()
+
+    ref_words = reference.split(delimiter)
+    hyp_words = hypothesis.split(delimiter)
+
+    edit_distance = _levenstein_distance(ref_words, hyp_words)
+    return float(edit_distance), len(ref_words)
 
 
 def char_errors():
