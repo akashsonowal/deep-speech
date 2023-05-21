@@ -5,6 +5,8 @@ import torchaudio
 from comet_ml import Experiment
 import numpy as np
 
+from .deepspeech import TextTransform, data_processing, SpeechRecognitionModel, GreedyDecoder
+
 train_dataset = torchaudio.datasets.LIBRISPEECH(
     "./", url="train-clean-100", download=True
 )
@@ -61,3 +63,6 @@ def main():
             iter_meter,
             experiment,
         )
+
+if __name__ == "__main__":
+    main()
