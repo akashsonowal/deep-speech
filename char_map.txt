@@ -1,4 +1,3 @@
-char_map_str = """
  ' 0
  <SPACE> 1
  a 2
@@ -27,4 +26,3 @@ char_map_str = """
  x 25
  y 26
  z 27
- """
