@@ -5,19 +5,12 @@ from torch import nn
 import torchaudio
 from comet_ml import Experiment
 
-from .deepspeech import TextTransform, data_processing, SpeechRecognitionModel, GreedyDecoder
-
-
-
-optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])
-scheduler = optim.lr_scheduler.OneCycleLR(
-    optimizer,
-    max_lr=hparams["learning_rate"],
-    steps_per_epoch=int(len(train_loader)),
-    epochs=hparams["epochs"],
-    anneal_startegy="linear",
+from .deepspeech import (
+    TextTransform,
+    data_processing,
+    SpeechRecognitionModel,
+    GreedyDecoder,
 )
-criterion = nn.CTCLoss(blank=28).to(device)
 
 
 def train():
@@ -30,9 +23,11 @@ def test():
 
 def main():
     train_dataset = torchaudio.datasets.LIBRISPEECH(
-    "./", url="train-clean-100", download=True
+        "./", url="train-clean-100", download=True
     )
-    test_dataset = torchaudio.datasets.LIBRISPEECH("./", url="test-clean", download=True)
+    test_dataset = torchaudio.datasets.LIBRISPEECH(
+        "./", url="test-clean", download=True
+    )
 
     train_audio_transforms = nn.Sequential(
         torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128),
@@ -40,6 +35,15 @@ def main():
         torchaudio.transforms.TimeMasking(time_mask_param=35),
     )
     valid_audio_transforms = torchaudio.transforms.MelSpectrogram()
+    optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])
+    scheduler = optim.lr_scheduler.OneCycleLR(
+        optimizer,
+        max_lr=hparams["learning_rate"],
+        steps_per_epoch=int(len(train_loader)),
+        epochs=hparams["epochs"],
+        anneal_startegy="linear",
+    )
+    criterion = nn.CTCLoss(blank=28).to(device)
     iter_meter = IterMeter()
     for epoch in range(1, epochs + 1):
         train(
@@ -64,6 +68,7 @@ def main():
             iter_meter,
             experiment,
         )
+
 
 if __name__ == "__main__":
     main()
