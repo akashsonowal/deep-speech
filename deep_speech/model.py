@@ -22,7 +22,7 @@ class BidirectionalGRU(nn.Module):
         pass 
 
 class SpeechRecognitionModel(nn.Module):
-    def __init__(self):
+    def __init__(self, rnn_dim, n_class, dropout=0.1):
         self.classifier = nn.Sequential(
             nn.Linear(rnn_dim*2, rnn_dim), #birnn returns rnn_dim*2
             nn.GELU(),
