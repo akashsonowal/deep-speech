@@ -31,12 +31,41 @@ def char_errors():
     pass
 
 
-def wer():
-    pass
+def wer(reference, hypothesis, ignore_case=False, delimiter=" "):
+    """Calculate word error rate (WER). WER compares reference text and
+    hypothesis text in word-level. WER is defined as:
+    .. math::
+        WER = (Sw + Dw + Iw) / Nw
+    where
+    .. code-block:: text
+        Sw is the number of words substituted,
+        Dw is the number of words deleted,
+        Iw is the number of words inserted,
+        Nw is the number of words in the reference
+    We can use levenshtein distance to calculate WER. Please draw an attention
+    that empty items will be removed when splitting sentences by delimiter.
+    :param reference: The reference sentence.
+    :type reference: basestring
+    :param hypothesis: The hypothesis sentence.
+    :type hypothesis: basestring
+    :param ignore_case: Whether case-sensitive or not.
+    :type ignore_case: bool
+    :param delimiter: Delimiter of input sentences.
+    :type delimiter: char
+    :return: Word error rate.
+    :rtype: float
+    :raises ValueError: If word number of reference is zero.
+    """
+    edit_distance, ref_len = word_errors(reference, hypothesis, ignore_case, delimiter)
+    if ref_len == 0:
+        raise ValueError("Reference's word number should be greater than 0.")
+
+    wer = float(edit_distance) / ref_len
+    return wer
 
 
 def cer(reference, hypothesis, ignore_case=False, remove_space=False):
-    """Calculate charactor error rate (CER). CER compares reference text and
+    """Calculate character error rate (CER). CER compares reference text and
     hypothesis text in char-level. CER is defined as:
     .. math::
         CER = (Sc + Dc + Ic) / Nc
@@ -62,7 +91,9 @@ def cer(reference, hypothesis, ignore_case=False, remove_space=False):
     :rtype: float
     :raises ValueError: If the reference length is zero.
     """
-    edit_distance, ref_len = char_errors(reference, hypothesis, ignore_case, remove_space)
+    edit_distance, ref_len = char_errors(
+        reference, hypothesis, ignore_case, remove_space
+    )
     if ref_len == 0:
         raise ValueError("Length of reference should be greater than 0.")
     cer = float(edit_distance) / ref_len
