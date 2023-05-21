@@ -37,7 +37,7 @@ def data_processing(data, data_type="train"):
     labels = []
     input_lengths = []
     label_lengths = []
+    # (tensor([[-0.0096, -0.0099, -0.0088,  ...,  0.0024,  0.0026,  0.0027]]), 16000, "PORTHOS FANCIES HIMSELF AT LA ROCHELLE THOUGHT D'ARTAGNAN AS THEY RETURNED FREIGHTED WITH BOTTLES", 8063, 274116, 36)
     for (waveform, _, utterance, _, _, _) in data:
         if data_type == "train":
             spec = train_audio_transforms(waveform).squeeze(0).transpose(0, 1)
-            
