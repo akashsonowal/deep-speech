@@ -2,6 +2,9 @@ import os
 import numpy as np
 import torch
 from torch import nn
+import torch.utils.data as data
+import torch.optim as optim
+import torch.nn.functional as F
 import torchaudio
 from comet_ml import Experiment
 
@@ -96,12 +99,40 @@ def test(model, device, test_loader, criterion, epoch, iter_meter, experiment):
         )
 
 
-def main():
+def main(
+    learning_rate=5e-4,
+    batch_size=20,
+    epochs=10,
+    train_url="train-clean-100",
+    test_url="test-clean",
+    experiment=Experiment(api_key="asr_key", disabled=True),
+):
+    h_params = {
+        "n_cnn_layers": 3,
+        "n_rnn_layers": 5,
+        "rnn_dim": 512,
+        "n_class": 29,
+        "n_feats": 128,
+        "stride": 2,
+        "dropout": 0.1,
+        "learning_rate": learning_rate,
+        "batch_size": batch_size,
+        "epochs": epochs,
+    }
+
+    experiment.log_parameters(h_params)
+    use_cuda = torch.cuda.is_available()
+    torch.manual_seed(7)
+    device = torch.device("cuda" if use_cuda else "cpu")
+
+    if not os.path.isdir("./data"):
+        os.makedirs("./data")
+
     train_dataset = torchaudio.datasets.LIBRISPEECH(
-        "./", url="train-clean-100", download=True
+        "./data", url=train_url, download=True
     )
     test_dataset = torchaudio.datasets.LIBRISPEECH(
-        "./", url="test-clean", download=True
+        "./data", url=test_url, download=True
     )
 
     train_audio_transforms = nn.Sequential(
@@ -110,15 +141,51 @@ def main():
         torchaudio.transforms.TimeMasking(time_mask_param=35),
     )
     valid_audio_transforms = torchaudio.transforms.MelSpectrogram()
-    optimizer = optim.AdamW(model.parameters(), hparams["learning_rate"])
+    text_transform = TextTransform()
+
+    kwargs = {"num_workers": 1, "pin_memory": True} if use_cuda else {}
+    train_loader = data.DataLoader(
+        dataset=train_dataset,
+        batch_size=h_params["batch_size"],
+        shuffle=True,
+        collate_fn=lambda x: data_processing(
+            x, train_audio_transforms, text_transform, **kwargs
+        ),
+    )
+    test_loader = data.DataLoader(
+        dataset=test_dataset,
+        batch_size=h_params["batch_size"],
+        shuffle=False,
+        collate_fn=lambda x: data_processing(
+            x, valid_audio_transforms, text_transform, **kwargs
+        ),
+    )
+
+    model = SpeechRecognitionModel(
+        h_params["n_cnn_layers"],
+        h_params["n_rnn_layers"],
+        h_params["rnn_dim"],
+        h_params["n_class"],
+        h_params["n_feats"],
+        h_params["stride"],
+        h_params["dropout"],
+    ).to(device)
+
+    print(model)
+    print(
+        "Num model parameters", sum([param.nelement() for param in model.parameters()])
+    )
+
+    criterion = nn.CTCLoss(blank=28).to(device)
+    optimizer = optim.AdamW(model.parameters(), h_params["learning_rate"])
     scheduler = optim.lr_scheduler.OneCycleLR(
         optimizer,
-        max_lr=hparams["learning_rate"],
+        max_lr=h_params["learning_rate"],
         steps_per_epoch=int(len(train_loader)),
-        epochs=hparams["epochs"],
-        anneal_startegy="linear",
+        epochs=h_params["epochs"],
+        anneal_strategy="linear",
     )
-    criterion = nn.CTCLoss(blank=28).to(device)
+
     iter_meter = IterMeter()
     for epoch in range(1, epochs + 1):
         train(
@@ -143,6 +210,8 @@ def main():
             iter_meter,
             experiment,
         )
+
+    experiment.end()
 
 
 if __name__ == "__main__":
