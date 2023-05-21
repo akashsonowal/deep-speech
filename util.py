@@ -20,7 +20,26 @@ def avg_wer(wer_scores, combined_ref_len):
 
 
 def _levenstein_distance(ref, hyp):
-    pass
+    """Levenshtein distance is a string metric for measuring the difference
+    between two sequences. Informally, the levenshtein distance is defined as
+    the minimum number of single-character edits (substitutions, insertions or
+    deletions) required to change one word into the other. We can naturally
+    extend the edits to word level when calculate levenshtein distance for
+    two sentences.
+    """
+    m = len(ref)
+    n = len(hyp)
+
+    # special case
+    if ref == hyp:
+        return 0
+    if m == 0:
+        return n
+    if n == 0:
+        return m
+    if m < n:
+        ref, hyp = hyp, ref
+        m, n = n, m
 
 
 def word_errors(reference, hypothesis, ignore_case=False, delimiter=" "):
