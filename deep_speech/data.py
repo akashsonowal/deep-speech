@@ -51,8 +51,8 @@ def data_processing(data, audio_transforms, text_transform):
 
     spectrograms = (
         nn.utils.rnn.pad_sequence(spectrograms, batch_first=True)
-        .unsqueeze(1)
-        .transpose(2, 3)
-    )
-    labels = nn.utils.rnn.pad_sequence(labels, batch_first=True)
+        .unsqueeze(1) #(batch_size, 1, max_time_steps, feature_dim) 
+        .transpose(2, 3) #(batch_size, 1, feature_dim, max_time_steps) 
+    ) 
+    labels = nn.utils.rnn.pad_sequence(labels, batch_first=True) #(batch_size, max_label_length)
     return spectrograms, labels, input_lengths, label_lengths
