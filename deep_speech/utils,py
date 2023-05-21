@@ -6,4 +6,5 @@ def GreedyDecoder(output, labels, label_lengths, blank_label=28, collapse_repeat
     targets = []
     for i, args in enumerate(arg_maxes):
         pass
+    return decodes, targets
     
