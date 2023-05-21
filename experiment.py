@@ -11,7 +11,7 @@ from .deepspeech import (
     SpeechRecognitionModel,
     GreedyDecoder,
 )
-from .util import IterMeter, train, test
+from .util import IterMeter, cer, wer
 
 
 def train(
