@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 import torch.nn.Functional as F
 
@@ -40,6 +41,27 @@ def _levenstein_distance(ref, hyp):
     if m < n:
         ref, hyp = hyp, ref
         m, n = n, m
+    # use O(min(m, n))space
+    distance = np.zeros((2, n + 1), dtype=np.int32)
+
+    # Initialize distance matrix
+    for j in range(0, n + 1):
+        distance[0][j] = j
+
+    # calculate levenstein distance
+    for i in range(1, m + 1):
+        prev_row_idx = (i - 1) % 2
+        cur_row_idx = i % 2
+        distance[cur_row_idx][0] = i
+        for j in range(1, n + 1):
+            if ref[i - 1] == hyp[j - 1]:
+                distance[cur_row_idx][j] = distance[prev_row_idx][j - 1]
+            else:
+                s_num = distance[prev_row_idx][j - 1] + 1
+                i_num = distance[cur_row_idx][j - 1] + 1
+                d_num = distance[prev_row_idx][j] + 1
+                distance[cur_row_idx][j] = min(s_num, i_num, d_num)
+        return distance[m % 2][n]
 
 
 def word_errors(reference, hypothesis, ignore_case=False, delimiter=" "):
