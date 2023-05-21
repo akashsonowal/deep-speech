@@ -31,6 +31,12 @@ class ResidualCNN(nn.Module):
         x = F.gelu(x)
         x = self.dropout1(x)
         x = self.cnn1(x)
+        x = self.layer_norm2(x)
+        x = F.gelu(x)
+        x = self.dropout2(x)
+        x = self.cnn2(x)
+        x += residual 
+        return x #(batch, channel, feature, time)
     
 class BidirectionalGRU(nn.Module):
     def __init__(self):
