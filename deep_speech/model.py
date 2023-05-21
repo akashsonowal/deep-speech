@@ -48,7 +48,11 @@ class BidirectionalGRU(nn.Module):
         self.dropout = nn.Dropout(dropout)
     
     def forward(self, x):
-        pass 
+        x = self.layer_norm(x)
+        x = F.gelu(x)
+        x, _ = self.BiGRU(x)
+        x = self.dropout(x)
+        return x 
 
 class SpeechRecognitionModel(nn.Module):
     def __init__(self, rnn_dim, n_class, dropout=0.1):
