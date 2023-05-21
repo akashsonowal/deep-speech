@@ -31,3 +31,13 @@ class TextTransform:
         for i in labels:
             string.append(self.index_map[i])
         return "".join(string).replace("", " ")
+
+def data_processing(data, data_type="train"):
+    spectrograms = []
+    labels = []
+    input_lengths = []
+    label_lengths = []
+    for (waveform, _, utterance, _, _, _) in data:
+        if data_type == "train":
+            spec = train_audio_transforms(waveform).squeeze(0).transpose(0, 1)
+            
