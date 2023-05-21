@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import torchaudio
 from comet_ml import Experiment
 
-from .deepspeech import (
+from deepspeech import (
     TextTransform,
     data_processing,
     SpeechRecognitionModel,
