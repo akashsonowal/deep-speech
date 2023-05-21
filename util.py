@@ -48,8 +48,32 @@ def word_errors(reference, hypothesis, ignore_case=False, delimiter=" "):
     return float(edit_distance), len(ref_words)
 
 
-def char_errors():
-    pass
+def char_errors(reference, hypothesis, ignore_case=False, remove_space=False):
+    """Compute the levenshtein distance between reference sequence and
+    hypothesis sequence in char-level.
+    :param reference: The reference sentence.
+    :type reference: basestring
+    :param hypothesis: The hypothesis sentence.
+    :type hypothesis: basestring
+    :param ignore_case: Whether case-sensitive or not.
+    :type ignore_case: bool
+    :param remove_space: Whether remove internal space characters
+    :type remove_space: bool
+    :return: Levenshtein distance and length of reference sentence.
+    :rtype: list
+    """
+    if ignore_case == True:
+        reference = reference.lower()
+        hypothesis = hypothesis.lower()
+
+    join_char = " "
+    if remove_space == True:
+        join_char = ""
+    reference = join_char.join(filter(None, reference.split(" ")))
+    hypothesis = join_char.join(filter(None, hypothesis.split(" ")))
+
+    edit_distance = _levenstein_distance(reference, hypothesis)
+    return float(edit_distance), len(reference)
 
 
 def wer(reference, hypothesis, ignore_case=False, delimiter=" "):
