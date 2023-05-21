@@ -1,3 +1,5 @@
+import torch.nn.Functional as F
+
 class IterMeter(object):
     """Keeps track of total iterations"""
 
@@ -19,6 +21,20 @@ def train(model, device, train_loader, criterion, optimizer, scheduler, epoch, i
             spectrograms, labels = spectrograms.to(device), labels.to(device)
             optimizer.zero_grad()
             output = model(spectrograms) # (batch, time, n_class)
+            output = F.log_softmax(output, dim=2)
+            output = output.transpose(0, 1) # (time, batch, n_class)
+
+            loss = criterion(output, labels, input_lengths, label_lengths)
+            loss.backward()
+
+            experiment.log_metric('loss', loss.item(), step=iter_meter.get())
+            experiment.log_metric('learning_rate', scheduler.get_lr(), step=iter_meter.get())
+
+            optimizer.step()
+            scheduler.step()
+            iter_meter.step()
+            if batch_idx % 100 == 0 or batch_idx == data_len:
+                print('Train Epoch: {} []\tLoss: {:.6f}')
 
 
 def test():
