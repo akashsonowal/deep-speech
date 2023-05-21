@@ -6,15 +6,7 @@ import torchaudio
 from comet_ml import Experiment
 
 from .deepspeech import TextTransform, data_processing, SpeechRecognitionModel, GreedyDecoder
-from .util import IterMeter
-
-def train():
-    pass
-
-
-def test():
-    pass
-
+from .util import IterMeter, train, test
 
 def main():
     train_dataset = torchaudio.datasets.LIBRISPEECH(
