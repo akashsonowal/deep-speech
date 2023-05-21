@@ -3,10 +3,13 @@ import torch.nn as nn
 class CNNLayerNorm(nn.Module):
     """Layer Normalization built for CNNs input"""
     def __init__(self, n_feats):
-        pass
+        super(CNNLayerNorm, self).__init__()
+        self.layer_norm = nn.LayerNorm(n_feats)
 
-    def forward(self, x):
-        pass
+    def forward(self, x): # x(batch, channel, feature, time)
+        x = x.transpose(2, 3).contiguous() # x(batch, channel, time, feature)
+        x = self.layer_norm(x)
+        return x.transpose(2, 3).contiguous() # x(batch, channel, feature, time)
 
 class ResidualCNN(nn.Module):
     def __init__(self):
