@@ -5,6 +5,7 @@ def GreedyDecoder(output, labels, label_lengths, blank_label=28, collapse_repeat
     decodes = []
     targets = []
     for i, args in enumerate(arg_maxes):
-        pass
+        decode = []
+        targets.append(text_transform.int_to_text(labels[i][:label_lengths[i]].tolist()))
     return decodes, targets
     
