@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch.nn.Functional as F
 
 class CNNLayerNorm(nn.Module):
     """Layer Normalization built for CNNs input"""
@@ -25,7 +26,11 @@ class ResidualCNN(nn.Module):
         self.layer_norm2 = CNNLayerNorm(n_feats)
 
     def forward(self, x):
-        pass
+        residual = x #(batch, channel, feature, time)
+        x = self.layer_norm1(x)
+        x = F.gelu(x)
+        x = self.dropout1(x)
+        x = self.cnn1(x)
     
 class BidirectionalGRU(nn.Module):
     def __init__(self):
