@@ -9,3 +9,10 @@ class IterMeter(object):
 
     def get(self):
         return self.val
+
+def train():
+    pass
+
+
+def test():
+    pass
