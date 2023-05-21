@@ -1,2 +1,6 @@
+import torch 
+
 def GreedyDecoder():
-    pass
+    arg_maxes = torch.argmax(output, dim=2)
+    decodes = []
+    targets = []
