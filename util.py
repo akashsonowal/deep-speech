@@ -1,3 +1,4 @@
+import torch
 import torch.nn.Functional as F
 
 
@@ -68,5 +69,5 @@ def test(model, device, test_loader, criterion, epoch, iter_meter, experiment):
         with torch.no_grad():
             for I, _data in enumerate(test_loader):
                 spectrograms, labels, input_lengths, label_lengths = _data 
-                
+
     
