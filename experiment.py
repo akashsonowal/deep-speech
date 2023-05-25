@@ -211,8 +211,6 @@ def main(
             experiment,
         )
 
-    experiment.end()
-
 
 if __name__ == "__main__":
     main()
