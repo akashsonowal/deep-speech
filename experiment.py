@@ -31,7 +31,7 @@ def train(
     model.train()
     data_len = len(train_loader.dataset)
     with experiment.train():
-        for batch_idx, _data in enumerate(train_loader):
+        for batch_idx, _data in enumerate(train_loader): # ((20, 1, 128, var_len), (20, var_len))
             spectrograms, labels, input_lengths, label_lengths = _data
             spectrograms, labels = spectrograms.to(device), labels.to(device)
             optimizer.zero_grad()
