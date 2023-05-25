@@ -30,7 +30,7 @@ def train(
 ):
     model.train()
     data_len = len(train_loader.dataset)
-    with experiment.train():
+    with experiment.context_manager("train"):
         for batch_idx, _data in enumerate(train_loader):
             spectrograms, labels, input_lengths, label_lengths = _data
             spectrograms, labels = spectrograms.to(device), labels.to(device)
@@ -67,7 +67,7 @@ def test(model, device, test_loader, criterion, epoch, iter_meter, experiment):
     model.eval()
     test_loss = 0
     test_cer, test_wer = [], []
-    with experiment.test():
+    with experiment.context_manager("test"):
         with torch.no_grad():
             for I, _data in enumerate(test_loader):
                 spectrograms, labels, input_lengths, label_lengths = _data
@@ -105,7 +105,7 @@ def main(
     epochs=10,
     train_url="train-clean-100",
     test_url="test-clean",
-    experiment=Experiment(api_key="asr_key", disabled=True),
+    experiment=Experiment(api_key="<Your API Key>", disabled=True),
 ):
     h_params = {
         "n_cnn_layers": 3,
