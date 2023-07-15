@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from tqdm import tqdm 
 import torch
 from torch import nn
 import torch.utils.data as data
@@ -31,7 +32,7 @@ def train(
     model.train()
     data_len = len(train_loader.dataset)
     with experiment.train():
-        for batch_idx, _data in enumerate(train_loader): # ((20, 1, 128, None), (20, None)) here None is any size
+        for batch_idx, _data in tqdm(enumerate(train_loader)): # ((20, 1, 128, None), (20, None)) here None is any size
             spectrograms, labels, input_lengths, label_lengths = _data
             spectrograms, labels = spectrograms.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -173,7 +174,7 @@ def main(
     )
 
     iter_meter = IterMeter()
-    for epoch in range(1, epochs + 1):
+    for epoch in tqdm(range(1, epochs + 1)):
         train(
             model,
             device,
