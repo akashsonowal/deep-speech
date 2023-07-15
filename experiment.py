@@ -128,12 +128,12 @@ def main(
     if not os.path.isdir("./data"):
         os.makedirs("./data")
 
-    train_dataset = torchaudio.datasets.LIBRISPEECH(
-        "./data", url=train_url, download=True
-    )
-    test_dataset = torchaudio.datasets.LIBRISPEECH(
-        "./data", url=test_url, download=True
-    )
+    if not os.listdir("./data"):
+        train_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=train_url, download=True)
+        test_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=test_url, download=True)
+    else:
+        train_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=train_url, download=False)
+        test_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=test_url, download=False)    
 
     train_audio_transforms = nn.Sequential(
         torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128),
