@@ -86,3 +86,15 @@ def GreedyDecoder(
                 decode.append(index.item())
         decodes.append(text_transform.int_to_text(decode))
     return decodes, targets
+
+class IterMeter(object):
+    """Keeps track of total iterations"""
+
+    def __init__(self):
+        self.val = 0
+
+    def step(self):
+        self.val += 1
+
+    def get(self):
+        return self.val
