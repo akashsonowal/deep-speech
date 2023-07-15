@@ -144,22 +144,8 @@ def main(
     text_transform = TextTransform()
 
     kwargs = {"num_workers": 1, "pin_memory": True} if use_cuda else {}
-    train_loader = data.DataLoader(
-        dataset=train_dataset,
-        batch_size=h_params["batch_size"],
-        shuffle=True,
-        collate_fn=lambda x: data_processing(
-            x, train_audio_transforms, text_transform, **kwargs
-        ),
-    )
-    test_loader = data.DataLoader(
-        dataset=test_dataset,
-        batch_size=h_params["batch_size"],
-        shuffle=False,
-        collate_fn=lambda x: data_processing(
-            x, valid_audio_transforms, text_transform, **kwargs
-        ),
-    )
+    train_loader = data.DataLoader(dataset=train_dataset, batch_size=h_params["batch_size"], shuffle=True, collate_fn=lambda x: data_processing(x, train_audio_transforms, text_transform), **kwargs)
+    test_loader = data.DataLoader(dataset=test_dataset, batch_size=h_params["batch_size"], shuffle=False, collate_fn=lambda x: data_processing(x, valid_audio_transforms, text_transform), **kwargs)
 
     model = SpeechRecognitionModel(
         h_params["n_cnn_layers"],
