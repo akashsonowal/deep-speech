@@ -1,6 +1,6 @@
 import torch 
 
-def GreedyDecoder(output, labels, label_lengths, blank_label=28, collapse_repeated=True):
+def GreedyDecoder(output, labels, label_lengths, text_transform, blank_label=28, collapse_repeated=True):
     arg_maxes = torch.argmax(output, dim=2)
     decodes = []
     targets = []
@@ -12,5 +12,5 @@ def GreedyDecoder(output, labels, label_lengths, blank_label=28, collapse_repeat
                 if collapse_repeated and j!=0 and index == args[j - 1]: # the current index is the same as the previous index
                     continue 
                 decode.append(index.item())
-        decodes.append(text_transform.int_to_txt(decode))
+        decodes.append(text_transform.int_to_text(decode))
     return decodes, targets
