@@ -1,10 +1,8 @@
-import json
 import torch
 import torch.nn as nn
 
 class TextTransform:
     """Maps characters to integers and vice versa"""
-
     def __init__(self):
         self.char_map_str = open("../char_map.txt", "r").read()
         self.char_map = {}
@@ -40,11 +38,11 @@ def data_processing(data, audio_transforms, text_transform):
     label_lengths = []
     # (tensor([[-0.0096, -0.0099, -0.0088,  ...,  0.0024,  0.0026,  0.0027]]), 16000, "PORTHOS FANCIES HIMSELF AT LA ROCHELLE THOUGHT D'ARTAGNAN AS THEY RETURNED FREIGHTED WITH BOTTLES", 8063, 274116, 36)
     for waveform, _, utterance, _, _, _ in data:
-        spec = audio_transforms(waveform).squeeze(0).transpose(0, 1)
+        spec = audio_transforms(waveform).squeeze(0).transpose(0, 1) # (time_steps, feature_dim)
         spectrograms.append(spec)
         label = torch.Tensor(text_transform.text_to_int(utterance.lower()))
         labels.append(label)
-        input_lengths.append(spec.shape[0] // 2)
+        input_lengths.append(spec.shape[0] // 2) # divided by 2 to downsample
         label_lengths.append(len(label))
 
     spectrograms = (
