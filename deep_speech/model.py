@@ -9,16 +9,14 @@ class CNNLayerNorm(nn.Module):
         super(CNNLayerNorm, self).__init__()
         self.layer_norm = nn.LayerNorm(n_feats)
 
-    def forward(self, x):  # x(batch, channel, feature, time)
-        x = x.transpose(2, 3).contiguous()  # x(batch, channel, time, feature)
+    def forward(self, x):  # x (batch, channel, freq, time)
+        x = x.transpose(2, 3).contiguous()  # x (batch, channel, freq, feature)
         x = self.layer_norm(x)
-        return x.transpose(2, 3).contiguous()  # x(batch, channel, feature, time)
+        return x.transpose(2, 3).contiguous()  # x (batch, channel, freq, time)
 
 
 class ResidualCNN(nn.Module):
-    """Residual CNN inspired by https://arxiv.org/pdf/1603.05027.pdf
-    except with layer norm instead of batch norm
-    """
+    """Residual CNN with layer norm instead of batch norm"""
 
     def __init__(self, in_channels, out_channels, kernel, stride, dropout, n_feats):
         super(ResidualCNN, self).__init__()
