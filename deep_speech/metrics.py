@@ -2,10 +2,6 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-def avg_wer(wer_scores, combined_ref_len):
-    return float(sum(wer_scores)) / float(combined_ref_len)
-
-
 def _levenstein_distance(ref, hyp):
     """Levenshtein distance is a string metric for measuring the difference
     between two sequences. Informally, the levenshtein distance is defined as
