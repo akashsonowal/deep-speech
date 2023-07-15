@@ -9,10 +9,10 @@ class CNNLayerNorm(nn.Module):
         super(CNNLayerNorm, self).__init__()
         self.layer_norm = nn.LayerNorm(n_feats)
 
-    def forward(self, x):  # x (batch, channel, freq, time)
-        x = x.transpose(2, 3).contiguous()  # x (batch, channel, freq, feature)
+    def forward(self, x):  # x (batch, channel, feature, time)
+        x = x.transpose(2, 3).contiguous()  # x (batch, channel, time, feature)
         x = self.layer_norm(x)
-        return x.transpose(2, 3).contiguous()  # x (batch, channel, freq, time)
+        return x.transpose(2, 3).contiguous()  # x (batch, channel, feature, time)
 
 
 class ResidualCNN(nn.Module):
@@ -21,10 +21,10 @@ class ResidualCNN(nn.Module):
     def __init__(self, in_channels, out_channels, kernel, stride, dropout, n_feats):
         super(ResidualCNN, self).__init__()
         self.cnn1 = nn.Conv2d(
-            in_channels, out_channels, kernel, stride, padding=kernel // 2
+            in_channels, out_channels, kernel, stride, padding=kernel // 2 # valid padding
         )
         self.cnn2 = nn.Conv2d(
-            in_channels, out_channels, kernel, stride, padding=kernel // 2
+            in_channels, out_channels, kernel, stride, padding=kernel // 2 # valid padding
         )
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
@@ -61,7 +61,7 @@ class BidirectionalGRU(nn.Module):
     def forward(self, x):
         x = self.layer_norm(x)
         x = F.gelu(x)
-        x, _ = self.BiGRU(x)
+        x, _ = self.BiGRU(x) #  x (batch size, seq_len, rnn_dim * 2) 2 is for 2 directions (bidirectional)
         x = self.dropout(x)
         return x
 
