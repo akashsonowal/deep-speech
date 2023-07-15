@@ -22,7 +22,7 @@ def _levenstein_distance(ref, hyp):
         return m
     if m < n:
         ref, hyp = hyp, ref
-        m, n = n, m
+        m, n = n, m # we will keep m > n
     # use O(min(m, n))space
     distance = np.zeros((2, n + 1), dtype=np.int32)
 
