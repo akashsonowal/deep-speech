@@ -3,7 +3,7 @@
 ## Dataset
 Librispeech: 1000 hours of read English speech with sampling rate of 16 kHz.
 
-train split: "train-clean-100" has 28539 examples (100 chapters read by 251 different speakers).
+train split: "train-clean-100" has 28539 examples (585 chapters and 251 different speakers where each speakers reads unique sample of the chapters).
 ```
 - speaker_id
   - chapter id
