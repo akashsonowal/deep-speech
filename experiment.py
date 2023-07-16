@@ -63,7 +63,14 @@ def train_one_epoch(
 
 
 def test_one_epoch(
-    model, device, test_loader, criterion, epoch, iter_meter, experiment
+    model,
+    device,
+    test_loader,
+    criterion,
+    epoch,
+    iter_meter,
+    experiment,
+    text_transform,
 ):
     print("\n Evaluating")
     model.eval()
@@ -82,7 +89,10 @@ def test_one_epoch(
                 test_loss += loss.item() / len(test_loader)
 
                 decoded_preds, decoded_targets = GreedyDecoder(
-                    output.transpose(0, 1), labels, label_lengths, text_transform,
+                    output.transpose(0, 1),
+                    labels,
+                    label_lengths,
+                    text_transform,
                 )
                 for j in range(len(decoded_preds)):
                     test_cer.append(cer(decoded_targets[j], decoded_preds[j]))
@@ -211,7 +221,14 @@ def main(
             experiment,
         )
         test_one_epoch(
-            model, device, test_loader, criterion, epoch, iter_meter, experiment
+            model,
+            device,
+            test_loader,
+            criterion,
+            epoch,
+            iter_meter,
+            experiment,
+            text_transform,
         )
         torch.save(model, "./model_checkpoint/deep_speech.pth")
 
