@@ -18,7 +18,12 @@ test split: "test-clean" has 2620 examples. (40 speakers)
 
 ## Experiment
 ```
-python3 experiment.py
+$ python3 experiment.py
+```
+
+## Inference
+```
+$ python3 transcribe.py
 ```
 
 ## Citation
