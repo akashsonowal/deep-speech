@@ -13,7 +13,7 @@ from deep_speech import (
 )
 
 
-def asr(data, sample_test=True):
+def asr(data, sample_test_example=True):
     h_params = {
         "n_cnn_layers": 3,
         "n_rnn_layers": 5,
@@ -37,8 +37,13 @@ def asr(data, sample_test=True):
         data, audio_transforms, text_transform
     )
 
-    if sample_test:
-        spectrograms, labels, input_lengths, label_lengths = spectrograms[0], labels[0], input_lengths[0], label_lengths[0]
+    if sample_test_example:
+        spectrograms, labels, input_lengths, label_lengths = (
+            spectrograms[:2],
+            labels[:2],
+            input_lengths[:2],
+            label_lengths[:2],
+        )
 
     model = SpeechRecognitionModel(
         h_params["n_cnn_layers"],
@@ -52,7 +57,7 @@ def asr(data, sample_test=True):
 
     model.load_state_dict(torch.load("./model_checkpoint/deep_speech.pth"))
     model.eval()
-    output = model(spectrograms)
+    output = model(spectrograms.to(device))
     output = F.log_softmax(output, dim=2)
     decoded_preds, decoded_targets = GreedyDecoder(
         output, labels, label_lengths, text_transform
