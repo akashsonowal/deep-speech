@@ -13,7 +13,7 @@ from deep_speech import (
 )
 
 
-def asr(data):
+def asr(data, sample_test=True):
     h_params = {
         "n_cnn_layers": 3,
         "n_rnn_layers": 5,
@@ -36,6 +36,9 @@ def asr(data):
     spectrograms, labels, input_lengths, label_lengths = data_processing(
         data, audio_transforms, text_transform
     )
+
+    if sample_test:
+        spectrograms, labels, input_lengths, label_lengths = spectrograms[0], labels[0], input_lengths[0], label_lengths[0]
 
     model = SpeechRecognitionModel(
         h_params["n_cnn_layers"],
