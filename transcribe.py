@@ -1,4 +1,3 @@
-
 import os
 import torch
 from torch import nn
@@ -12,6 +11,7 @@ from deep_speech import (
     SpeechRecognitionModel,
     GreedyDecoder,
 )
+
 
 def asr(data):
     h_params = {
@@ -28,20 +28,24 @@ def asr(data):
     torch.manual_seed(7)
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    audio_transforms = torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128)
+    audio_transforms = torchaudio.transforms.MelSpectrogram(
+        sample_rate=16000, n_mels=128
+    )
     text_transform = TextTransform()
 
-    spectrograms, labels, input_lengths, label_lengths = data_processing(data, audio_transforms, text_transform)
+    spectrograms, labels, input_lengths, label_lengths = data_processing(
+        data, audio_transforms, text_transform
+    )
 
     model = SpeechRecognitionModel(
-            h_params["n_cnn_layers"],
-            h_params["n_rnn_layers"],
-            h_params["rnn_dim"],
-            h_params["n_class"],
-            h_params["n_feats"],
-            h_params["stride"],
-            h_params["dropout"],
-        ).to(device)
+        h_params["n_cnn_layers"],
+        h_params["n_rnn_layers"],
+        h_params["rnn_dim"],
+        h_params["n_class"],
+        h_params["n_feats"],
+        h_params["stride"],
+        h_params["dropout"],
+    ).to(device)
 
     model.load_state_dict(torch.load("./model_checkpoint/deep_speech.pth"))
     model.eval()
@@ -52,6 +56,7 @@ def asr(data):
     print("The original labels is", decoded_targets)
     print("**********")
     print("The transcription by the model is", decoded_preds)
+
 
 if __name__ == "__main__":
     if os.listdir("./data"):
