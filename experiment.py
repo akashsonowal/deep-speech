@@ -18,21 +18,12 @@ from deep_speech import (
 from util import IterMeter, cer, wer
 
 
-def train(
-    model,
-    device,
-    train_loader,
-    criterion,
-    optimizer,
-    scheduler,
-    epoch,
-    iter_meter,
-    experiment,
-):
+def train_one_epoch(model, device, train_loader, criterion, optimizer, scheduler, epoch, iter_meter, experiment):
     model.train()
-    data_len = len(train_loader.dataset)
+    total_loss = 0
+
     with experiment.train():
-        for batch_idx, _data in tqdm(enumerate(train_loader)): # ((20, 1, 128, None), (20, None)) here None is any size
+        for batch_idx, _data in tqdm(enumerate(train_loader)): # ((32, 1, 128, None), (32, None)) here None is any size
             spectrograms, labels, input_lengths, label_lengths = _data
             spectrograms, labels = spectrograms.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -51,26 +42,20 @@ def train(
             optimizer.step()
             scheduler.step()
             iter_meter.step()
-            if batch_idx % 100 == 0 or batch_idx == data_len:
-                print(
-                    "Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}".format(
-                        epoch,
-                        batch_idx * len(spectrograms),
-                        data_len,
-                        100.0 * batch_idx / len(train_loader),
-                        loss.item(),
-                    )
-                )
+
+            total_loss += loss.item()
+        
+        print("Train loss after Epoch: ", epoch, " is ", total_loss / len(train_loader))
 
 
-def test(model, device, test_loader, criterion, epoch, iter_meter, experiment):
+def test_one_epoch(model, device, test_loader, criterion, epoch, iter_meter, experiment):
     print("\n Evaluating")
     model.eval()
     test_loss = 0
     test_cer, test_wer = [], []
     with experiment.test():
         with torch.no_grad():
-            for I, _data in enumerate(test_loader):
+            for batch_idx, _data in tqdm(enumerate(test_loader)):
                 spectrograms, labels, input_lengths, label_lengths = _data
                 spectrograms, labels = spectrograms.to(device), labels.to(device)
                 output = model(spectrograms)  # (batch, time, n_class)
@@ -86,6 +71,7 @@ def test(model, device, test_loader, criterion, epoch, iter_meter, experiment):
                 for j in range(len(decoded_preds)):
                     test_cer.append(cer(decoded_targets[j], decoded_preds[j]))
                     test_wer.append(wer(decoded_targets[j], decoded_preds[j]))
+
         avg_cer = sum(test_cer) / len(test_cer)
         avg_wer = sum(test_wer) / len(test_wer)
 
@@ -102,8 +88,8 @@ def test(model, device, test_loader, criterion, epoch, iter_meter, experiment):
 
 def main(
     learning_rate=5e-4,
-    batch_size=20,
-    epochs=10,
+    batch_size=32,
+    epochs=1,
     train_url="train-clean-100",
     test_url="test-clean",
     experiment=Experiment(api_key="<Your API Key>", disabled=True),
@@ -141,7 +127,7 @@ def main(
         torchaudio.transforms.FrequencyMasking(freq_mask_param=15),
         torchaudio.transforms.TimeMasking(time_mask_param=35),
     )
-    valid_audio_transforms = torchaudio.transforms.MelSpectrogram()
+    valid_audio_transforms = torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128)
     text_transform = TextTransform()
 
     kwargs = {"num_workers": 1, "pin_memory": True} if use_cuda else {}
@@ -175,29 +161,8 @@ def main(
 
     iter_meter = IterMeter()
     for epoch in tqdm(range(1, epochs + 1)):
-        train(
-            model,
-            device,
-            train_loader,
-            criterion,
-            optimizer,
-            scheduler,
-            epoch,
-            iter_meter,
-            experiment,
-        )
-        test(
-            model,
-            device,
-            test_loader,
-            criterion,
-            optimizer,
-            scheduler,
-            epoch,
-            iter_meter,
-            experiment,
-        )
-
+        train_one_epoch(model, device, train_loader, criterion, optimizer, scheduler, epoch, iter_meter, experiment)
+        test_one_epoch(model, device, test_loader, criterion, epoch, iter_meter, experiment)
 
 if __name__ == "__main__":
     main()
