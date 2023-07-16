@@ -35,8 +35,8 @@ def train_one_epoch(
     total_loss = 0
 
     with experiment.train():
-        for batch_idx, _data in tqdm(
-            enumerate(train_loader)
+        for batch_idx, _data in enumerate(
+            train_loader
         ):  # ((32, 1, 128, None), (32, None)) here None is any size
             spectrograms, labels, input_lengths, label_lengths = _data
             spectrograms, labels = spectrograms.to(device), labels.to(device)
@@ -71,7 +71,7 @@ def test_one_epoch(
     test_cer, test_wer = [], []
     with experiment.test():
         with torch.no_grad():
-            for batch_idx, _data in tqdm(enumerate(test_loader)):
+            for batch_idx, _data in enumerate(test_loader):
                 spectrograms, labels, input_lengths, label_lengths = _data
                 spectrograms, labels = spectrograms.to(device), labels.to(device)
                 output = model(spectrograms)  # (batch, time, n_class)
