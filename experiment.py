@@ -82,7 +82,7 @@ def test_one_epoch(
                 test_loss += loss.item() / len(test_loader)
 
                 decoded_preds, decoded_targets = GreedyDecoder(
-                    output.transpose(0, 1), labels, label_lengths
+                    output.transpose(0, 1), labels, label_lengths, text_transform,
                 )
                 for j in range(len(decoded_preds)):
                     test_cer.append(cer(decoded_targets[j], decoded_preds[j]))
