@@ -115,7 +115,7 @@ def test_one_epoch(
 def main(
     learning_rate=5e-4,
     batch_size=32,
-    epochs=1,
+    epochs=10,
     train_url="train-clean-100",
     test_url="test-clean",
     experiment=Experiment(api_key="<Your API Key>", disabled=True),
