@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from tqdm import tqdm 
+from tqdm import tqdm
 import torch
 from torch import nn
 import torch.utils.data as data
@@ -18,12 +18,24 @@ from deep_speech import (
 from util import IterMeter, cer, wer
 
 
-def train_one_epoch(model, device, train_loader, criterion, optimizer, scheduler, epoch, iter_meter, experiment):
+def train_one_epoch(
+    model,
+    device,
+    train_loader,
+    criterion,
+    optimizer,
+    scheduler,
+    epoch,
+    iter_meter,
+    experiment,
+):
     model.train()
     total_loss = 0
 
     with experiment.train():
-        for batch_idx, _data in tqdm(enumerate(train_loader)): # ((32, 1, 128, None), (32, None)) here None is any size
+        for batch_idx, _data in tqdm(
+            enumerate(train_loader)
+        ):  # ((32, 1, 128, None), (32, None)) here None is any size
             spectrograms, labels, input_lengths, label_lengths = _data
             spectrograms, labels = spectrograms.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -44,11 +56,13 @@ def train_one_epoch(model, device, train_loader, criterion, optimizer, scheduler
             iter_meter.step()
 
             total_loss += loss.item()
-        
+
         print("Train loss after Epoch: ", epoch, " is ", total_loss / len(train_loader))
 
 
-def test_one_epoch(model, device, test_loader, criterion, epoch, iter_meter, experiment):
+def test_one_epoch(
+    model, device, test_loader, criterion, epoch, iter_meter, experiment
+):
     print("\n Evaluating")
     model.eval()
     test_loss = 0
@@ -116,23 +130,45 @@ def main(
         os.makedirs("./data")
 
     if not os.listdir("./data"):
-        train_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=train_url, download=True)
-        test_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=test_url, download=True)
+        train_dataset = torchaudio.datasets.LIBRISPEECH(
+            "./data", url=train_url, download=True
+        )
+        test_dataset = torchaudio.datasets.LIBRISPEECH(
+            "./data", url=test_url, download=True
+        )
     else:
-        train_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=train_url, download=False)
-        test_dataset = torchaudio.datasets.LIBRISPEECH("./data", url=test_url, download=False)    
+        train_dataset = torchaudio.datasets.LIBRISPEECH(
+            "./data", url=train_url, download=False
+        )
+        test_dataset = torchaudio.datasets.LIBRISPEECH(
+            "./data", url=test_url, download=False
+        )
 
     train_audio_transforms = nn.Sequential(
         torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128),
         torchaudio.transforms.FrequencyMasking(freq_mask_param=15),
         torchaudio.transforms.TimeMasking(time_mask_param=35),
     )
-    valid_audio_transforms = torchaudio.transforms.MelSpectrogram(sample_rate=16000, n_mels=128)
+    valid_audio_transforms = torchaudio.transforms.MelSpectrogram(
+        sample_rate=16000, n_mels=128
+    )
     text_transform = TextTransform()
 
     kwargs = {"num_workers": 1, "pin_memory": True} if use_cuda else {}
-    train_loader = data.DataLoader(dataset=train_dataset, batch_size=h_params["batch_size"], shuffle=True, collate_fn=lambda x: data_processing(x, train_audio_transforms, text_transform), **kwargs)
-    test_loader = data.DataLoader(dataset=test_dataset, batch_size=h_params["batch_size"], shuffle=False, collate_fn=lambda x: data_processing(x, valid_audio_transforms, text_transform), **kwargs)
+    train_loader = data.DataLoader(
+        dataset=train_dataset,
+        batch_size=h_params["batch_size"],
+        shuffle=True,
+        collate_fn=lambda x: data_processing(x, train_audio_transforms, text_transform),
+        **kwargs
+    )
+    test_loader = data.DataLoader(
+        dataset=test_dataset,
+        batch_size=h_params["batch_size"],
+        shuffle=False,
+        collate_fn=lambda x: data_processing(x, valid_audio_transforms, text_transform),
+        **kwargs
+    )
 
     model = SpeechRecognitionModel(
         h_params["n_cnn_layers"],
@@ -161,8 +197,21 @@ def main(
 
     iter_meter = IterMeter()
     for epoch in tqdm(range(1, epochs + 1)):
-        train_one_epoch(model, device, train_loader, criterion, optimizer, scheduler, epoch, iter_meter, experiment)
-        test_one_epoch(model, device, test_loader, criterion, epoch, iter_meter, experiment)
+        train_one_epoch(
+            model,
+            device,
+            train_loader,
+            criterion,
+            optimizer,
+            scheduler,
+            epoch,
+            iter_meter,
+            experiment,
+        )
+        test_one_epoch(
+            model, device, test_loader, criterion, epoch, iter_meter, experiment
+        )
+
 
 if __name__ == "__main__":
     main()
