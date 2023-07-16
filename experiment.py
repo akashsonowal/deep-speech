@@ -211,6 +211,7 @@ def main(
         test_one_epoch(
             model, device, test_loader, criterion, epoch, iter_meter, experiment
         )
+        torch.save(model, "./model_checkpoint/deep_speech.pth")
 
 
 if __name__ == "__main__":
