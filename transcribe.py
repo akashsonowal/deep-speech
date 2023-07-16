@@ -64,7 +64,7 @@ if __name__ == "__main__":
     if os.listdir("./data"):
         data = torchaudio.datasets.LIBRISPEECH(
             "./data", url="test-clean", download=False
-        )[0]
+        )
         asr(data)
     else:
         raise ValueError("upload audio files for transcribing")
