@@ -60,7 +60,7 @@ def asr(data):
 
 if __name__ == "__main__":
     if os.listdir("./data"):
-        data = torchaudio.datasets.LIBRISPEECH("./data", url=test_url, download=False)
+        data = torchaudio.datasets.LIBRISPEECH("./data", url=test_url, download=False)[0]
         asr(data)
     else:
         raise ValueError("upload audio files for transcribing")
