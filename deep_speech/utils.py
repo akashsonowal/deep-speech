@@ -6,7 +6,7 @@ class TextTransform:
     """Maps characters to integers and vice versa"""
 
     def __init__(self):
-        self.char_map_str = open("../char_map.txt", "r").read()
+        self.char_map_str = open("char_map.txt", "r").read()
         self.char_map = {}
         self.index_map = {}
         for line in self.char_map_str.strip().split("\n"):
