@@ -51,7 +51,9 @@ def asr(data):
     model.eval()
     output = model(spectrograms)
     output = F.log_softmax(output, dim=2)
-    decoded_preds, decoded_targets = GreedyDecoder(output, labels, label_lengths)
+    decoded_preds, decoded_targets = GreedyDecoder(
+        output, labels, label_lengths, text_transform
+    )
 
     print("The original labels is", decoded_targets)
     print("**********")
@@ -60,7 +62,9 @@ def asr(data):
 
 if __name__ == "__main__":
     if os.listdir("./data"):
-        data = torchaudio.datasets.LIBRISPEECH("./data", url=test_url, download=False)[0]
+        data = torchaudio.datasets.LIBRISPEECH(
+            "./data", url="test-clean", download=False
+        )[0]
         asr(data)
     else:
         raise ValueError("upload audio files for transcribing")
