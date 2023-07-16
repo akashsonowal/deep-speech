@@ -14,8 +14,10 @@ from deep_speech import (
     data_processing,
     SpeechRecognitionModel,
     GreedyDecoder,
+    IterMeter,
+    cer,
+    wer,
 )
-from util import IterMeter, cer, wer
 
 
 def train_one_epoch(
