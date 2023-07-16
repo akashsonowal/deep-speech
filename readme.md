@@ -3,7 +3,7 @@
 ## Dataset
 Librispeech: 1000 hours of read English speech with sampling rate of 16 kHz.
 
-train split: "train-clean-100" has 28539 examples (585 chapters and 251 different speakers where each speakers reads unique sample of the chapters).
+train split: "train-clean-100" has 28539 examples (251 speakers)
 ```
 - speaker_id
   - chapter id
@@ -14,8 +14,12 @@ train split: "train-clean-100" has 28539 examples (585 chapters and 251 differen
 - speaker_id
 ...  
 ```
+test split: "test-clean" has 2620 examples. (40 speakers)
 
-test split: "test-clean" has 2620 examples. (40 chapters read by 4 different speakers)
+## Experiment
+```
+python3 experiment.py
+```
 
 ## Citation
 https://www.assemblyai.com/blog/end-to-end-speech-recognition-pytorch/
