@@ -230,7 +230,7 @@ def main(
             experiment,
             text_transform,
         )
-        torch.save(model, "./model_checkpoint/deep_speech.pth")
+        torch.save(model.state_dict(), "./model_checkpoint/deep_speech.pth")
 
 
 if __name__ == "__main__":
