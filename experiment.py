@@ -208,6 +208,8 @@ def main(
     )
 
     iter_meter = IterMeter()
+    os.makedirs("./model_checkpoint/", exist_ok=True)
+
     for epoch in tqdm(range(1, epochs + 1)):
         train_one_epoch(
             model,
@@ -230,7 +232,8 @@ def main(
             experiment,
             text_transform,
         )
-        torch.save(model.state_dict(), "./model_checkpoint/deep_speech.pth")
+
+    torch.save(model.state_dict(), "./model_checkpoint/deep_speech.pth")
 
 
 if __name__ == "__main__":
