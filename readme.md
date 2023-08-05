@@ -27,4 +27,5 @@ $ python3 transcribe.py
 ```
 
 ## Citation
-https://www.assemblyai.com/blog/end-to-end-speech-recognition-pytorch/
+- https://www.assemblyai.com/blog/end-to-end-speech-recognition-pytorch/
+- CTC decoder gist: https://gist.github.com/awni/56369a90d03953e370f3964c826ed4b0
