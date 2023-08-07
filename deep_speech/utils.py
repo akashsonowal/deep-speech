@@ -83,7 +83,7 @@ def GreedyDecoder(
                     collapse_repeated and j != 0 and index == args[j - 1]
                 ):  # the current index is the same as the previous index
                     continue
-                decode.append(index.item())
+                decode.append(index.item()) # remove blank token is missing ???
         decodes.append(text_transform.int_to_text(decode))
     return decodes, targets
 
