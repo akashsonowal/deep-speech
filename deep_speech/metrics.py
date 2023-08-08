@@ -23,22 +23,24 @@ def _levenstein_distance(ref, hyp):
     if m < n:
         ref, hyp = hyp, ref
         m, n = n, m # we will keep m > n i.e, ref greater than hyp
+    
+    # col is on hyp
     distance = np.zeros((2, n + 1), dtype=np.int32) # use O(min(m, n)) space so two row matrix only
 
     # Initialize distance matrix
     for j in range(0, n + 1):
-        distance[0][j] = j # when ref is empty
+        distance[0][j] = j # when ref is empty so we delete in hyp
 
     # calculate levenstein distance
     for i in range(1, m + 1): # iterating on the ref
         prev_row_idx = (i - 1) % 2 # % 2 is to index between the two rows
         cur_row_idx = i % 2
-        distance[cur_row_idx][0] = i # when hyp is empty
+        distance[cur_row_idx][0] = i # when hyp is empty, insert in hyp
         for j in range(1, n + 1):
             if ref[i - 1] == hyp[j - 1]:
                 distance[cur_row_idx][j] = distance[prev_row_idx][j - 1]
             else:
-                s_num = distance[prev_row_idx][j - 1] + 1 # the previous charactres in both ref and string match so substitute the cur char in ref string
+                s_num = distance[prev_row_idx][j - 1] + 1 # the previous characters in both ref and string match so substitute the cur char in ref string
                 i_num = distance[cur_row_idx][j - 1] + 1 # character from the hypothesis string needs to be inserted into the reference string
                 d_num = distance[prev_row_idx][j] + 1 # a character from the reference string needs to be deleted to match the hypothesis string
                 distance[cur_row_idx][j] = min(s_num, i_num, d_num)
