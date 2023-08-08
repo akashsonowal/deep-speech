@@ -40,9 +40,9 @@ def _levenstein_distance(ref, hyp):
             if ref[i - 1] == hyp[j - 1]:
                 distance[cur_row_idx][j] = distance[prev_row_idx][j - 1]
             else:
-                s_num = distance[prev_row_idx][j - 1] + 1 # the previous characters in both ref and string match so substitute the cur char in ref string
-                i_num = distance[cur_row_idx][j - 1] + 1 # character from the hypothesis string needs to be inserted into the reference string
-                d_num = distance[prev_row_idx][j] + 1 # a character from the reference string needs to be deleted to match the hypothesis string
+                s_num = distance[prev_row_idx][j - 1] + 1 # the previous characters in both ref and hyp string match so substitute the cur char in hyp string
+                i_num = distance[cur_row_idx][j - 1] + 1 # character from the hypo string needs to be deleted
+                d_num = distance[prev_row_idx][j] + 1 # character needs to be inserted to hyp string
                 distance[cur_row_idx][j] = min(s_num, i_num, d_num)
         return distance[m % 2][n]
 
