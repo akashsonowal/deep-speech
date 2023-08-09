@@ -52,7 +52,7 @@ class BidirectionalGRU(nn.Module):
             input_size=rnn_dim,
             hidden_size=hidden_size,
             num_layers=1,
-            batch_first=batch_first,
+            batch_first=batch_first, # Whether the input is provided as (batch, seq_len, feature) or (seq_len, batch, feature)
             bidirectional=True,
         )
         self.layer_norm = nn.LayerNorm(rnn_dim)
@@ -61,6 +61,7 @@ class BidirectionalGRU(nn.Module):
     def forward(self, x):
         x = self.layer_norm(x)
         x = F.gelu(x)
+        # _ is (forward_hidden_states, backward_hidden_states)
         x, _ = self.BiGRU(x) #  x (batch size, seq_len, rnn_dim * 2) 2 is for 2 directions (bidirectional)
         x = self.dropout(x)
         return x
